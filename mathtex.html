@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaTeX Math Formula Renderer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        #inputBox {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            background-color: #333;
+            color: #e0e0e0;
+            border: 1px solid #555;
+        }
+        #output {
+            padding: 20px;
+            border: 1px solid #555;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>LaTeX Math Formula Renderer</h1>
+    <input type="text" id="inputBox" placeholder="Enter LaTeX formula here">
+    <div id="output"></div>
+
+    <script>
+        const inputBox = document.getElementById('inputBox');
+        const output = document.getElementById('output');
+        
+        const colors = ['#ffcccc', '#ccffcc', '#ccccff', '#ffffcc', '#ffccff', '#ccffff'];
+
+        function colorizeBrackets(formula) {
+            let colorIndex = 0;
+            const stack = [];
+            let result = '';
+
+            for (let i = 0; i < formula.length; i++) {
+                const char = formula[i];
+                if (char === '(') {
+                    const color = colors[colorIndex % colors.length];
+                    result += `\\textcolor{${color}}{(}`;
+                    stack.push(color);
+                    colorIndex++;
+                } else if (char === ')') {
+                    const color = stack.pop();
+                    result += `\\textcolor{${color}}{)}`;
+                } else if (char === '=' && (i + 1 < formula.length) && /^[+-]$/.test(formula[i + 1])) {
+                    result += `${char}\\textcolor{red}{${formula[i + 1]}}`;
+                    i++; // Skip the next character as it has been processed
+                } else {
+                    result += char;
+                }
+            }
+
+            return result;
+        }
+
+        function colorizeFirstSign(formula) {
+            const firstSignMatch = formula.match(/^([+-])/);
+            if (firstSignMatch) {
+                const firstSign = firstSignMatch[0];
+                const restOfFormula = formula.slice(1);
+                return `\\textcolor{red}{${firstSign}}${restOfFormula}`;
+            }
+            return formula;
+        }
+
+        function processFormula(formula) {
+            formula = colorizeFirstSign(formula.trim());
+            formula = colorizeBrackets(formula);
+            return formula;
+        }
+
+        inputBox.addEventListener('input', () => {
+            const formula = inputBox.value;
+            const processedFormula = processFormula(formula);
+            output.innerHTML = `$$${processedFormula}$$`;
+            MathJax.typesetPromise([output]);
+        });
+    </script>
+</body>
+</html>
