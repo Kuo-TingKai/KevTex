@@ -2,7 +2,8 @@
 
 A Tex Editor for helping mathematicians/physicists to derive and verify the formulae.
 
-![image](https://github.com/user-attachments/assets/58468526-688d-42e9-acf6-a441574ae5bf)
+![image](https://github.com/user-attachments/assets/86b798a7-2f54-4139-9ebd-ea143cd53822)
+
 
 ## Todo
 
